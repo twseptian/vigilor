@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Light — soft paper, readable ink ── */
+  :root,
+  html.light {
+    --background: 210 20% 97%;
+    --foreground: 215 22% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 22% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 22% 22%;
+    --primary: 173 45% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 16% 94%;
+    --secondary-foreground: 215 18% 30%;
+    --muted: 210 14% 94%;
+    --muted-foreground: 215 12% 42%;
+    --accent: 173 30% 94%;
+    --accent-foreground: 173 40% 26%;
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 18% 88%;
+    --input: 214 16% 92%;
+    --ring: 173 45% 32%;
+    --radius: 0.625rem;
+    --surface: 210 16% 96%;
+    --glow: 173 35% 38%;
+    --shell: 0 0% 100%;
+    --canvas-wash: transparent;
+  }
+
+  /* ── Dark — dim ink, soft teal (no neon) ── */
+  html.dark {
+    --background: 210 14% 9%;
+    --foreground: 210 14% 90%;
+    --card: 210 12% 12%;
+    --card-foreground: 210 14% 90%;
+    --popover: 210 12% 13%;
+    --popover-foreground: 210 14% 90%;
+    --primary: 173 30% 42%;
+    --primary-foreground: 166 25% 96%;
+    --secondary: 210 10% 15%;
+    --secondary-foreground: 210 12% 86%;
+    --muted: 210 10% 15%;
+    --muted-foreground: 210 10% 68%;
+    --accent: 173 16% 16%;
+    --accent-foreground: 166 25% 78%;
+    --destructive: 0 48% 52%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 210 10% 20%;
+    --input: 210 10% 16%;
+    --ring: 173 30% 42%;
+    --surface: 210 12% 11%;
+    --glow: 173 22% 30%;
+    --shell: 210 12% 11%;
+    --canvas-wash: transparent;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-color: hsl(var(--background));
+    min-height: 100vh;
+  }
+  html.dark body {
+    background-image:
+      radial-gradient(ellipse 70% 40% at 12% -8%, hsl(210 18% 16% / 0.5), transparent 55%);
+    background-attachment: fixed;
+  }
+  html.light body {
+    background-image:
+      radial-gradient(ellipse 70% 40% at 8% -8%, hsl(210 25% 93% / 0.9), transparent 55%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: hsl(173 35% 42% / 0.22);
+  }
+
+  /* Headings stay readable without per-page gray-900 hacks */
+  h1, h2, h3, h4 {
+    @apply text-foreground;
+  }
+}
+
+.input {
+  @apply w-full border border-border rounded-lg px-3 py-2 text-sm
+    focus:outline-none focus:ring-2 focus:ring-ring
+    bg-card text-foreground placeholder:text-muted-foreground;
+}
+
+.log-panel::-webkit-scrollbar { width: 6px; }
+.log-panel::-webkit-scrollbar-track { @apply bg-transparent; }
+.log-panel::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+
+@layer components {
+  .vigilor-card {
+    @apply bg-card text-card-foreground border border-border rounded-xl shadow-sm;
+  }
+  .vigilor-stat {
+    @apply vigilor-card px-4 py-3 flex flex-col gap-1 transition-colors
+      hover:border-teal-600/25 dark:hover:border-teal-700/35;
+  }
+  .vigilor-title {
+    @apply text-2xl font-bold text-slate-800 dark:text-zinc-100;
+  }
+  .vigilor-subtitle {
+    @apply text-sm text-slate-500 dark:text-zinc-400;
+  }
+  .vigilor-chip {
+    @apply inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md
+      bg-teal-50 text-teal-800 border border-teal-200
+      dark:bg-teal-950/45 dark:text-teal-200 dark:border-teal-800/45;
+  }
+  .vigilor-soft-ok {
+    @apply bg-teal-50/90 text-teal-800 border border-teal-200/90
+      dark:bg-teal-950/40 dark:text-teal-200 dark:border-teal-800/45;
+  }
+  .vigilor-soft-info {
+    @apply bg-slate-50 text-slate-600 border border-slate-200
+      dark:bg-zinc-950/50 dark:text-zinc-400 dark:border-zinc-800;
+  }
+  .vigilor-soft-warn {
+    @apply bg-amber-50 text-amber-900 border border-amber-200
+      dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-800/50;
+  }
+  .vigilor-soft-danger {
+    @apply bg-red-50 text-red-800 border border-red-200
+      dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/50;
+  }
+  .vigilor-icon-box {
+    @apply flex items-center justify-center rounded-lg
+      bg-teal-50 border border-teal-200 text-teal-700
+      dark:bg-teal-950/45 dark:border-teal-800/45 dark:text-teal-300;
+  }
+  .vigilor-btn-primary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-semibold
+      bg-teal-700 text-white hover:bg-teal-600
+      dark:bg-teal-700 dark:text-teal-50 dark:hover:bg-teal-600
+      transition-colors;
+  }
+  .vigilor-btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium
+      text-foreground border border-border hover:bg-muted transition-colors;
+  }
+  .vigilor-tab {
+    @apply px-3 py-1.5 text-[12px] font-medium rounded-lg text-muted-foreground
+      hover:text-foreground hover:bg-muted transition-colors;
+  }
+  .vigilor-tab-active {
+    @apply text-teal-800 bg-teal-50 border border-teal-200
+      dark:text-teal-200 dark:bg-teal-950/45 dark:border-teal-800/45;
+  }
+  .vigilor-row-active {
+    @apply bg-teal-50/90 dark:bg-teal-950/35;
+  }
+  .vigilor-row-hover {
+    @apply hover:bg-teal-50/70 dark:hover:bg-teal-950/25;
+  }
+  .vigilor-shell {
+    background-color: hsl(var(--shell));
+  }
+}

@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: pentest_ui
+      POSTGRES_USER: ${DB_USER:-pentest}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme-db-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pentest} -d pentest_ui"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-pentest}:${DB_PASSWORD:-changeme-db-password}@postgres:5432/pentest_ui
+      SECRET_KEY: ${SECRET_KEY:-changeme-generate-with-openssl-rand-hex-32}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-changeme-32-byte-key-base64-encoded}
+      FIRST_ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      FIRST_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme123}
+      FIRST_ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@localhost}
+      CORS_ORIGINS: '["http://localhost:80","http://localhost:3000"]'
+      REPORTS_DIR: /app/data/reports
+    volumes:
+      - pentest_data:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pentest_data:
+  postgres_data:
